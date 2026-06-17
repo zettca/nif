@@ -72,7 +72,7 @@ function computeCheckDigit(nif: string): number {
 }
 
 const OTP_INPUT =
-  "w-10 h-12 border-2 border-border rounded-lg text-heading font-mono text-xl font-semibold text-center ";
+  "w-8 sm:w-10 h-12 border-2 border-border rounded-lg text-heading font-mono text-xl font-semibold text-center ";
 
 export default function App() {
   const [value, setValue] = useState("");
@@ -118,7 +118,7 @@ export default function App() {
         : "";
 
   return (
-    <main className="min-h-screen max-w-lg py-12 px-4 mx-auto flex flex-col gap-10">
+    <main className="min-h-screen max-w-xl py-12 px-4 mx-auto flex flex-col gap-10">
       {/* ── Header ── */}
       <header>
         <h1 className="text-4xl font-extrabold text-heading mb-2.5 tracking-tight m-0">
@@ -137,7 +137,7 @@ export default function App() {
       <section>
         <label
           htmlFor="nif"
-          className="block text-xs font-bold uppercase tracking-widest mb-3"
+          className="inline-block text-xs font-bold uppercase tracking-widest mb-3"
         >
           Número de Identificação Fiscal
         </label>
@@ -146,18 +146,18 @@ export default function App() {
           length={NIF_LENGTH}
           value={value}
           onValueChange={setValue}
-          className="flex items-center gap-2"
+          className="flex items-center gap-1"
         >
           <div className="flex gap-2">
             {Array.from({ length: 8 }, (_, i) => (
               <OTPField.Input
                 key={i}
-                className={`${OTP_INPUT} ${otpStateBorder}`}
+                className={OTP_INPUT}
                 aria-label={`Dígito ${i + 1} de ${NIF_LENGTH}`}
               />
             ))}
           </div>
-          <OTPField.Separator className="w-5 h-2px bg-border shrink-0 rounded-sm" />
+          <OTPField.Separator className="w-4 h-2px bg-border shrink-0 rounded-sm" />
           <div className="flex gap-2">
             <OTPField.Input
               className={`${OTP_INPUT} bg-code ${otpStateBorder}`}

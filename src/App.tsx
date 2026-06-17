@@ -70,14 +70,13 @@ function computeCheckDigit(nif: string): number {
 }
 
 // Shared class strings kept as constants to avoid repetition in the loop
-const CARD = "border-2 border-[var(--border)] rounded-xl px-5 py-[1.125rem]";
-const CARD_LABEL =
-  "text-[0.72rem] font-bold uppercase tracking-[0.08em] text-[var(--text)] mb-[0.3rem]";
+const CARD = "border-2 border-border rounded-xl px-5 py-[1.125rem]";
+const CARD_LABEL = "text-xs font-bold uppercase tracking-widest mb-1";
 const OTP_INPUT =
-  "box-border m-0 p-0 w-[2.625rem] h-12 border-2 border-[var(--border)] rounded-lg " +
-  "bg-[var(--bg)] text-[var(--text-h)] font-mono text-xl font-semibold text-center " +
+  "box-border m-0 p-0 w-[2.625rem] h-12 border-2 border-border rounded-lg " +
+  "bg-background text-heading font-mono text-xl font-semibold text-center " +
   "transition-[border-color,box-shadow] duration-150 " +
-  "focus:outline-none focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_var(--accent-bg)] " +
+  "focus:outline-none focus:border-accent focus:shadow-[0_0_0_3px_var(--accent-bg)] " +
   "max-[480px]:w-[2.25rem] max-[480px]:h-11 max-[480px]:text-lg";
 
 export default function App() {
@@ -125,19 +124,19 @@ export default function App() {
 
   // Table cell helpers
   const th = (left = false) =>
-    `py-1 px-3 border-b border-[var(--border)] font-sans text-[0.72rem] uppercase tracking-[0.06em] font-bold ${left ? "text-left text-[var(--text)]" : "text-right text-[var(--text)]"}`;
+    `py-1 px-3 border-b border-border font-sans text-xs uppercase tracking-wider font-bold ${left ? "text-left" : "text-right"}`;
   const td = (left = false) =>
-    `py-1 px-3 border-b border-[var(--border)] font-mono ${left ? "text-left text-[var(--text)]" : "text-right text-[var(--text-h)]"}`;
+    `py-1 px-3 border-b border-border font-mono ${left ? "text-left" : "text-right"}`;
 
   return (
     <main className="min-h-screen py-10 px-4 pb-16">
       <div className="max-w-[640px] mx-auto flex flex-col gap-10">
         {/* ── Header ── */}
         <header>
-          <h1 className="text-[clamp(1.75rem,5vw,2.25rem)] font-extrabold text-[var(--text-h)] mb-[0.6rem] -tracking-[0.02em] m-0">
+          <h1 className="text-[clamp(1.75rem,5vw,2.25rem)] font-extrabold text-heading mb-2.5 tracking-tight m-0">
             Validador de NIF
           </h1>
-          <p className="m-0 leading-[1.65]">
+          <p className="m-0 leading-relaxed">
             O <strong>NIF</strong> (Número de Identificação Fiscal) é o número
             único de identificação de cada contribuinte em Portugal. Tem{" "}
             <strong>9 dígitos</strong> — os primeiros identificam o tipo de
@@ -150,7 +149,7 @@ export default function App() {
         <section>
           <label
             htmlFor="nif"
-            className="block text-[0.8rem] font-bold uppercase tracking-[0.08em] text-[var(--text)] mb-3"
+            className="block text-xs font-bold uppercase tracking-widest mb-3"
           >
             Número de Identificação Fiscal
           </label>
@@ -159,9 +158,9 @@ export default function App() {
             length={NIF_LENGTH}
             value={value}
             onValueChange={setValue}
-            className="flex items-center gap-[0.4rem]"
+            className="flex items-center gap-2"
           >
-            <div className="flex gap-[0.375rem]">
+            <div className="flex gap-1.5">
               {Array.from({ length: 8 }, (_, i) => (
                 <OTPField.Input
                   key={i}
@@ -170,15 +169,15 @@ export default function App() {
                 />
               ))}
             </div>
-            <OTPField.Separator className="w-5 h-[2px] bg-[var(--border)] shrink-0 rounded-sm" />
-            <div className="flex gap-[0.375rem]">
+            <OTPField.Separator className="w-5 h-0.5 bg-border shrink-0 rounded-sm" />
+            <div className="flex gap-1.5">
               <OTPField.Input
-                className={`${OTP_INPUT} bg-[var(--code-bg)] ${otpStateBorder}`}
+                className={`${OTP_INPUT} bg-code ${otpStateBorder}`}
                 aria-label="Dígito de controlo"
               />
             </div>
           </OTPField.Root>
-          <p className="mt-2 text-sm text-[var(--text)] min-h-[1.4em]">
+          <p className="mt-2 text-sm min-h-[1.4em]">
             {value.length === 0 && "Introduza os 9 dígitos do NIF."}
             {value.length > 0 && value.length < 8 && "Continue a introduzir…"}
             {value.length === 8 && (
@@ -202,19 +201,19 @@ export default function App() {
 
         {/* ── Result ── */}
         {showResult && (
-          <section className="flex flex-col gap-[0.875rem]">
+          <section className="flex flex-col gap-3.5">
             {/* Entity type */}
             {entity ? (
               <div className={CARD}>
                 <div className={CARD_LABEL}>Tipo de Entidade</div>
-                <div className="text-[1.15rem] font-bold text-[var(--text-h)] mb-[0.2rem]">
+                <div className="text-lg font-bold text-heading mb-1">
                   {entity.type}
                 </div>
-                <div className="text-sm text-[var(--text)] leading-[1.5]">
+                <div className="text-sm leading-normal">
                   {entity.description}
                 </div>
                 {entity.deprecated && (
-                  <div className="mt-[0.625rem] text-[0.8rem] text-amber-700 dark:text-amber-400 bg-amber-700/8 dark:bg-amber-400/8 rounded-md px-[0.65rem] py-[0.35rem]">
+                  <div className="mt-2.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-700/8 dark:bg-amber-400/8 rounded-md px-2.5 py-1.5">
                     Prefixo desativado — não é emitido desde 2001.
                   </div>
                 )}
@@ -222,10 +221,10 @@ export default function App() {
             ) : isComplete ? (
               <div className={CARD}>
                 <div className={CARD_LABEL}>Tipo de Entidade</div>
-                <div className="text-[1.15rem] font-bold text-[var(--text-h)] mb-[0.2rem]">
+                <div className="text-lg font-bold text-heading mb-1">
                   Prefixo desconhecido
                 </div>
-                <div className="text-sm text-[var(--text)] leading-[1.5]">
+                <div className="text-sm leading-normal">
                   O prefixo <strong>{value.slice(0, 2)}</strong> não corresponde
                   a nenhuma entidade fiscal reconhecida pela AT.
                 </div>
@@ -241,7 +240,7 @@ export default function App() {
                     : "border-red-600 dark:border-red-400 bg-red-600/5 dark:bg-red-400/7"
                 }`}
               >
-                <div className="flex items-center gap-2 mb-[0.3rem]">
+                <div className="flex items-center gap-2 mb-1">
                   <span
                     className={`text-base font-extrabold leading-none ${isValid ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
                     aria-hidden="true"
@@ -250,7 +249,7 @@ export default function App() {
                   </span>
                   <strong>{isValid ? "NIF Válido" : "NIF Inválido"}</strong>
                 </div>
-                <p className="m-0 text-[0.9rem]">
+                <p className="m-0 text-sm">
                   {isValid ? (
                     <>
                       O dígito de controlo <strong>{value[8]}</strong> está
@@ -272,73 +271,28 @@ export default function App() {
             {/* Algorithm breakdown */}
             {calcRows && (
               <details className={`group ${CARD}`}>
-                <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden text-sm font-semibold text-[var(--text-h)] flex items-center gap-2 select-none">
-                  <span className="text-[0.6rem] text-[var(--text)] transition-transform duration-200 group-open:rotate-90">
+                <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden text-sm font-semibold text-heading flex items-center gap-2 select-none">
+                  <span className="text-lg transition-transform duration-200 group-open:rotate-90">
                     ▶
                   </span>
                   Como é calculado o dígito de controlo?
                 </summary>
                 <div className="mt-4 text-sm">
-                  <p className="mb-3 text-[var(--text)]">
-                    Multiplicam-se os primeiros 8 dígitos pelos pesos 9, 8, 7,
-                    6, 5, 4, 3, 2 e somam-se os produtos:
-                  </p>
-                  <table className="w-full border-collapse font-mono text-sm mb-4">
-                    <thead>
-                      <tr>
-                        <th className={th(true)}>Pos.</th>
-                        <th className={th()}>Dígito</th>
-                        <th className={th()}>Peso</th>
-                        <th className={th()}>Produto</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {calcRows.map((r) => (
-                        <tr key={r.pos}>
-                          <td className={td(true)}>{r.pos}</td>
-                          <td className={td()}>{r.digit}</td>
-                          <td className={td()}>{r.weight}</td>
-                          <td className={td()}>{r.product}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                    <tfoot>
-                      <tr>
-                        <td
-                          colSpan={3}
-                          className="py-1 px-3 text-left border-t-2 border-t-[var(--border)] font-sans"
-                        >
-                          <strong>Soma</strong>
-                        </td>
-                        <td className="py-1 px-3 text-right border-t-2 border-t-[var(--border)] font-mono text-[var(--text-h)]">
-                          <strong>{calcSum}</strong>
-                        </td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                  <ol className="m-0 pl-[1.4rem] flex flex-col gap-[0.4rem] text-sm text-[var(--text)]">
-                    <li>
-                      {calcSum} mod 11 ={" "}
-                      <strong className="text-[var(--text-h)]">
-                        {calcRemainder}
-                      </strong>
-                    </li>
-                    <li>
-                      {calcRemainder! < 2 ? (
-                        <>
-                          Resto &lt; 2 → dígito de controlo ={" "}
-                          <strong className="text-[var(--text-h)]">0</strong>
-                        </>
-                      ) : (
-                        <>
-                          11 − {calcRemainder} ={" "}
-                          <strong className="text-[var(--text-h)]">
-                            {calcCheck}
-                          </strong>
-                        </>
-                      )}
-                    </li>
-                  </ol>
+                  <div className="bg-code p-3 rounded font-mono text-sm flex flex-col gap-1">
+                    <div>
+                      ={" "}
+                      {calcRows
+                        .map((r) => `${r.digit}*${r.weight}`)
+                        .join(" + ")}{" "}
+                      = <b>{calcSum}</b>
+                    </div>
+                    <div>
+                      = {calcSum} % 11 = <b>{calcRemainder}</b>
+                    </div>
+                    <div>
+                      = 11 - 6 = <b>{calcCheck}</b>
+                    </div>
+                  </div>
                 </div>
               </details>
             )}
@@ -347,31 +301,38 @@ export default function App() {
 
         {/* ── Prefix reference ── */}
         <section>
-          <h2 className="text-lg font-bold text-[var(--text-h)] m-0 mb-[0.35rem]">
-            Prefixos do NIF
-          </h2>
-          <p className="m-0 mb-4 text-sm text-[var(--text)]">
-            O 1.º ou os 2 primeiros dígitos determinam o tipo de entidade
-            contribuinte.
-          </p>
-          <div
-            className="grid gap-[0.4rem]"
-            style={{
-              gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-            }}
-          >
-            {PREFIXES.map(({ key, display, type }) => (
+          <details className={`group ${CARD}`}>
+            <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden text-sm font-semibold text-heading flex items-center gap-2 select-none">
+              <span className="text-lg transition-transform duration-200 group-open:rotate-90">
+                ▶
+              </span>
+              Prefixos do NIF
+            </summary>
+            <div className="mt-4">
+              <p className="m-0 mb-4 text-sm">
+                O 1.º ou os 2 primeiros dígitos determinam o tipo de entidade
+                contribuinte.
+              </p>
               <div
-                key={key}
-                className="flex items-center gap-[0.625rem] py-[0.45rem] px-3 border border-[var(--border)] rounded-lg text-[0.8rem]"
+                className="grid gap-2"
+                style={{
+                  gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+                }}
               >
-                <code className="bg-[var(--code-bg)] text-[var(--accent)] font-mono text-[0.8rem] font-bold py-[0.1rem] px-[0.45rem] rounded shrink-0 whitespace-nowrap">
-                  {display}
-                </code>
-                <span className="text-[var(--text)] leading-[1.3]">{type}</span>
+                {PREFIXES.map(({ key, display, type }) => (
+                  <div
+                    key={key}
+                    className="flex items-center gap-2 py-2 px-3 border border-border rounded-lg text-xs"
+                  >
+                    <code className="bg-code text-accent font-mono text-xs font-bold py-0.5 px-2 rounded shrink-0 whitespace-nowrap">
+                      {display}
+                    </code>
+                    <span>{type}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          </details>
         </section>
       </div>
     </main>

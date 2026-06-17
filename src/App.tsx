@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { OTPFieldPreview as OTPField } from "@base-ui/react/otp-field";
+import { Card } from "./Card";
 
 const NIF_LENGTH = 9;
 const WEIGHTS = [9, 8, 7, 6, 5, 4, 3, 2] as const;
@@ -69,15 +70,8 @@ function computeCheckDigit(nif: string): number {
   return r < 2 ? 0 : 11 - r;
 }
 
-// Shared class strings kept as constants to avoid repetition in the loop
-const CARD = "border-2 border-border rounded-xl px-5 py-[1.125rem]";
-const CARD_LABEL = "text-xs font-bold uppercase tracking-widest mb-1";
 const OTP_INPUT =
-  "box-border m-0 p-0 w-[2.625rem] h-12 border-2 border-border rounded-lg " +
-  "bg-background text-heading font-mono text-xl font-semibold text-center " +
-  "transition-[border-color,box-shadow] duration-150 " +
-  "focus:outline-none focus:border-accent focus:shadow-[0_0_0_3px_var(--accent-bg)] " +
-  "max-[480px]:w-[2.25rem] max-[480px]:h-11 max-[480px]:text-lg";
+  "w-10 h-12 border-2 border-border rounded-lg text-heading font-mono text-xl font-semibold text-center ";
 
 export default function App() {
   const [value, setValue] = useState("");
@@ -117,224 +111,236 @@ export default function App() {
   // Border colour applied to every OTP input to reflect validity
   const otpStateBorder =
     isComplete && isValid
-      ? "!border-green-600 dark:!border-green-400"
+      ? "!border-success"
       : isComplete && isValid === false
-        ? "!border-red-600 dark:!border-red-400"
+        ? "!border-error"
         : "";
 
-  // Table cell helpers
-  const th = (left = false) =>
-    `py-1 px-3 border-b border-border font-sans text-xs uppercase tracking-wider font-bold ${left ? "text-left" : "text-right"}`;
-  const td = (left = false) =>
-    `py-1 px-3 border-b border-border font-mono ${left ? "text-left" : "text-right"}`;
-
   return (
-    <main className="min-h-screen py-10 px-4 pb-16">
-      <div className="max-w-[640px] mx-auto flex flex-col gap-10">
-        {/* ── Header ── */}
-        <header>
-          <h1 className="text-[clamp(1.75rem,5vw,2.25rem)] font-extrabold text-heading mb-2.5 tracking-tight m-0">
-            Validador de NIF
-          </h1>
-          <p className="m-0 leading-relaxed">
-            O <strong>NIF</strong> (Número de Identificação Fiscal) é o número
-            único de identificação de cada contribuinte em Portugal. Tem{" "}
-            <strong>9 dígitos</strong> — os primeiros identificam o tipo de
-            entidade e o último é um <strong>dígito de controlo</strong>{" "}
-            calculado pelo algoritmo de módulo&nbsp;11.
-          </p>
-        </header>
+    <main className="min-h-screen max-w-lg py-12 px-4 mx-auto flex flex-col gap-10">
+      {/* ── Header ── */}
+      <header>
+        <h1 className="text-4xl font-extrabold text-heading mb-2.5 tracking-tight m-0">
+          Validador de NIF
+        </h1>
+        <p className="m-0">
+          O <strong>NIF</strong> (Número de Identificação Fiscal) é o número
+          único de identificação de cada contribuinte em Portugal. Tem{" "}
+          <strong>9 dígitos</strong> — os primeiros identificam o tipo de
+          entidade e o último é um <strong>dígito de controlo</strong> calculado
+          pelo algoritmo de módulo 11.
+        </p>
+      </header>
 
-        {/* ── OTP field ── */}
-        <section>
-          <label
-            htmlFor="nif"
-            className="block text-xs font-bold uppercase tracking-widest mb-3"
-          >
-            Número de Identificação Fiscal
-          </label>
-          <OTPField.Root
-            id="nif"
-            length={NIF_LENGTH}
-            value={value}
-            onValueChange={setValue}
-            className="flex items-center gap-2"
-          >
-            <div className="flex gap-1.5">
-              {Array.from({ length: 8 }, (_, i) => (
-                <OTPField.Input
-                  key={i}
-                  className={`${OTP_INPUT} ${otpStateBorder}`}
-                  aria-label={`Dígito ${i + 1} de ${NIF_LENGTH}`}
-                />
-              ))}
-            </div>
-            <OTPField.Separator className="w-5 h-0.5 bg-border shrink-0 rounded-sm" />
-            <div className="flex gap-1.5">
+      {/* ── OTP field ── */}
+      <section>
+        <label
+          htmlFor="nif"
+          className="block text-xs font-bold uppercase tracking-widest mb-3"
+        >
+          Número de Identificação Fiscal
+        </label>
+        <OTPField.Root
+          id="nif"
+          length={NIF_LENGTH}
+          value={value}
+          onValueChange={setValue}
+          className="flex items-center gap-2"
+        >
+          <div className="flex gap-2">
+            {Array.from({ length: 8 }, (_, i) => (
               <OTPField.Input
-                className={`${OTP_INPUT} bg-code ${otpStateBorder}`}
-                aria-label="Dígito de controlo"
+                key={i}
+                className={`${OTP_INPUT} ${otpStateBorder}`}
+                aria-label={`Dígito ${i + 1} de ${NIF_LENGTH}`}
               />
-            </div>
-          </OTPField.Root>
-          <p className="mt-2 text-sm min-h-[1.4em]">
-            {value.length === 0 && "Introduza os 9 dígitos do NIF."}
-            {value.length > 0 && value.length < 8 && "Continue a introduzir…"}
-            {value.length === 8 && (
-              <>
-                Dígito de controlo esperado: <strong>{expectedCheck}</strong>.
-              </>
-            )}
-            {isComplete && isValid && (
-              <>
-                Dígito de controlo <strong>{value[8]}</strong> correto.
-              </>
-            )}
-            {isComplete && !isValid && (
-              <>
-                Dígito de controlo incorreto (esperado{" "}
-                <strong>{expectedCheck}</strong>).
-              </>
-            )}
-          </p>
-        </section>
+            ))}
+          </div>
+          <OTPField.Separator className="w-5 h-2px bg-border shrink-0 rounded-sm" />
+          <div className="flex gap-2">
+            <OTPField.Input
+              className={`${OTP_INPUT} bg-code ${otpStateBorder}`}
+              aria-label="Dígito de controlo"
+            />
+          </div>
+        </OTPField.Root>
+        <p className="mt-2 text-sm min-h-2">
+          {value.length === 0 && "Introduza os 9 dígitos do NIF."}
+          {value.length > 0 && value.length < 8 && "Continue a introduzir…"}
+          {value.length === 8 && (
+            <>
+              Dígito de controlo esperado: <strong>{expectedCheck}</strong>.
+            </>
+          )}
+          {isComplete && isValid && (
+            <>
+              Dígito de controlo <strong>{value[8]}</strong> correto.
+            </>
+          )}
+          {isComplete && !isValid && (
+            <>
+              Dígito de controlo incorreto (esperado{" "}
+              <strong>{expectedCheck}</strong>).
+            </>
+          )}
+        </p>
+      </section>
 
-        {/* ── Result ── */}
-        {showResult && (
-          <section className="flex flex-col gap-3.5">
-            {/* Entity type */}
-            {entity ? (
-              <div className={CARD}>
-                <div className={CARD_LABEL}>Tipo de Entidade</div>
-                <div className="text-lg font-bold text-heading mb-1">
-                  {entity.type}
-                </div>
-                <div className="text-sm leading-normal">
-                  {entity.description}
-                </div>
-                {entity.deprecated && (
-                  <div className="mt-2.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-700/8 dark:bg-amber-400/8 rounded-md px-2.5 py-1.5">
-                    Prefixo desativado — não é emitido desde 2001.
-                  </div>
-                )}
+      {/* ── Result ── */}
+      {showResult && (
+        <section className="grid gap-4">
+          {/* Entity type */}
+          {entity ? (
+            <Card label="Tipo de Entidade">
+              <div className="text-lg font-bold text-heading mb-1">
+                {entity.type}
               </div>
-            ) : isComplete ? (
-              <div className={CARD}>
-                <div className={CARD_LABEL}>Tipo de Entidade</div>
-                <div className="text-lg font-bold text-heading mb-1">
-                  Prefixo desconhecido
+              <div className="text-sm leading-normal">{entity.description}</div>
+              {entity.deprecated && (
+                <div className="mt-2.5 text-xs text-warning bg-warning/10 rounded-md px-2.5 py-1.5">
+                  Prefixo desativado — não é emitido desde 2001.
                 </div>
-                <div className="text-sm leading-normal">
-                  O prefixo <strong>{value.slice(0, 2)}</strong> não corresponde
-                  a nenhuma entidade fiscal reconhecida pela AT.
-                </div>
-              </div>
-            ) : null}
-
-            {/* Validity */}
-            {isComplete && (
-              <div
-                className={`${CARD} ${
-                  isValid
-                    ? "border-green-600 dark:border-green-400 bg-green-600/5 dark:bg-green-400/7"
-                    : "border-red-600 dark:border-red-400 bg-red-600/5 dark:bg-red-400/7"
-                }`}
-              >
-                <div className="flex items-center gap-2 mb-1">
-                  <span
-                    className={`text-base font-extrabold leading-none ${isValid ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
-                    aria-hidden="true"
-                  >
-                    {isValid ? "✓" : "✗"}
-                  </span>
-                  <strong>{isValid ? "NIF Válido" : "NIF Inválido"}</strong>
-                </div>
-                <p className="m-0 text-sm">
-                  {isValid ? (
-                    <>
-                      O dígito de controlo <strong>{value[8]}</strong> está
-                      correto.
-                    </>
-                  ) : entity === null ? (
-                    <>Prefixo não reconhecido.</>
-                  ) : (
-                    <>
-                      Dígito de controlo incorreto — esperado{" "}
-                      <strong>{expectedCheck}</strong>, recebido{" "}
-                      <strong>{value[8]}</strong>.
-                    </>
-                  )}
-                </p>
-              </div>
-            )}
-
-            {/* Algorithm breakdown */}
-            {calcRows && (
-              <details className={`group ${CARD}`}>
+              )}
+              <details className="group mt-4">
                 <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden text-sm font-semibold text-heading flex items-center gap-2 select-none">
                   <span className="text-lg transition-transform duration-200 group-open:rotate-90">
                     ▶
                   </span>
-                  Como é calculado o dígito de controlo?
+                  Prefixos do NIF
                 </summary>
-                <div className="mt-4 text-sm">
-                  <div className="bg-code p-3 rounded font-mono text-sm flex flex-col gap-1">
-                    <div>
-                      ={" "}
-                      {calcRows
-                        .map((r) => `${r.digit}*${r.weight}`)
-                        .join(" + ")}{" "}
-                      = <b>{calcSum}</b>
-                    </div>
-                    <div>
-                      = {calcSum} % 11 = <b>{calcRemainder}</b>
-                    </div>
-                    <div>
-                      = 11 - 6 = <b>{calcCheck}</b>
-                    </div>
+                <div className="mt-4">
+                  <p className="m-0 mb-4 text-sm">
+                    O 1.º ou os 2 primeiros dígitos determinam o tipo de
+                    entidade contribuinte.
+                  </p>
+                  <div
+                    className="grid gap-2"
+                    style={{
+                      gridTemplateColumns:
+                        "repeat(auto-fill, minmax(220px, 1fr))",
+                    }}
+                  >
+                    {PREFIXES.map(({ key, display, type }) => (
+                      <div
+                        key={key}
+                        className="flex items-center gap-2 py-2 px-3 border border-border rounded-lg text-xs"
+                      >
+                        <code className="bg-code text-accent font-mono text-xs font-bold py-0.5 px-2 rounded shrink-0 whitespace-nowrap">
+                          {display}
+                        </code>
+                        <span>{type}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </details>
-            )}
-          </section>
-        )}
-
-        {/* ── Prefix reference ── */}
-        <section>
-          <details className={`group ${CARD}`}>
-            <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden text-sm font-semibold text-heading flex items-center gap-2 select-none">
-              <span className="text-lg transition-transform duration-200 group-open:rotate-90">
-                ▶
-              </span>
-              Prefixos do NIF
-            </summary>
-            <div className="mt-4">
-              <p className="m-0 mb-4 text-sm">
-                O 1.º ou os 2 primeiros dígitos determinam o tipo de entidade
-                contribuinte.
-              </p>
-              <div
-                className="grid gap-2"
-                style={{
-                  gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-                }}
-              >
-                {PREFIXES.map(({ key, display, type }) => (
-                  <div
-                    key={key}
-                    className="flex items-center gap-2 py-2 px-3 border border-border rounded-lg text-xs"
-                  >
-                    <code className="bg-code text-accent font-mono text-xs font-bold py-0.5 px-2 rounded shrink-0 whitespace-nowrap">
-                      {display}
-                    </code>
-                    <span>{type}</span>
-                  </div>
-                ))}
+            </Card>
+          ) : isComplete ? (
+            <Card label="Tipo de Entidade" status="error">
+              <div className="text-lg font-bold text-heading mb-1">
+                Prefixo desconhecido
               </div>
-            </div>
-          </details>
+              <div className="text-sm leading-normal">
+                O prefixo <strong>{value.slice(0, 2)}</strong> não corresponde a
+                nenhuma entidade fiscal reconhecida pela AT.
+              </div>
+              <details className="group mt-4">
+                <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden text-sm font-semibold text-heading flex items-center gap-2 select-none">
+                  <span className="text-lg transition-transform duration-200 group-open:rotate-90">
+                    ▶
+                  </span>
+                  Prefixos do NIF
+                </summary>
+                <div className="mt-4">
+                  <p className="m-0 mb-4 text-sm">
+                    O 1.º ou os 2 primeiros dígitos determinam o tipo de
+                    entidade contribuinte.
+                  </p>
+                  <div
+                    className="grid gap-2"
+                    style={{
+                      gridTemplateColumns:
+                        "repeat(auto-fill, minmax(220px, 1fr))",
+                    }}
+                  >
+                    {PREFIXES.map(({ key, display, type }) => (
+                      <div
+                        key={key}
+                        className="flex items-center gap-2 py-2 px-3 border border-border rounded-lg text-xs"
+                      >
+                        <code className="bg-code text-accent font-mono text-xs font-bold py-0.5 px-2 rounded shrink-0 whitespace-nowrap">
+                          {display}
+                        </code>
+                        <span>{type}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </details>
+            </Card>
+          ) : null}
+
+          {/* Validity */}
+          {isComplete && (
+            <Card status={isValid ? "success" : "error"}>
+              <div className="flex items-center gap-2 mb-1">
+                <span
+                  className={`text-base font-extrabold leading-none ${
+                    isValid ? "text-success" : "text-error"
+                  }`}
+                  aria-hidden="true"
+                >
+                  {isValid ? "✓" : "✗"}
+                </span>
+                <strong>{isValid ? "NIF Válido" : "NIF Inválido"}</strong>
+              </div>
+              <p className="m-0 text-sm">
+                {isValid ? (
+                  <>
+                    O dígito de controlo <strong>{value[8]}</strong> está
+                    correto.
+                  </>
+                ) : entity === null ? (
+                  <>Prefixo não reconhecido.</>
+                ) : (
+                  <>
+                    Dígito de controlo incorreto — esperado{" "}
+                    <strong>{expectedCheck}</strong>, recebido{" "}
+                    <strong>{value[8]}</strong>.
+                  </>
+                )}
+              </p>
+              {calcRows && (
+                <details className="group mt-4">
+                  <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden text-sm font-semibold text-heading flex items-center gap-2 select-none">
+                    <span className="text-lg transition-transform duration-200 group-open:rotate-90">
+                      ▶
+                    </span>
+                    Como é calculado o dígito de controlo?
+                  </summary>
+                  <div className="mt-4 text-sm">
+                    <div className="bg-code p-3 rounded font-mono text-sm flex flex-col gap-1">
+                      <div>
+                        ⇒{" "}
+                        {calcRows
+                          .map((r) => `${r.digit}*${r.weight}`)
+                          .join(" + ")}{" "}
+                        = <b>{calcSum}</b>
+                      </div>
+                      <div>
+                        ⇒ {calcSum} mod 11 = <b>{calcRemainder}</b>
+                      </div>
+                      <div>
+                        ⇒ 11 - 6 = <b>{calcCheck}</b>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+              )}
+            </Card>
+          )}
         </section>
-      </div>
+      )}
     </main>
   );
 }

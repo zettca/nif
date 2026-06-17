@@ -9,6 +9,9 @@ export default defineConfig({
       border: "var(--border)",
       code: "var(--code-bg)",
       accent: "var(--accent)",
+      success: "var(--success)",
+      warning: "var(--warning)",
+      error: "var(--error)",
     },
   },
 });

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { OTPFieldPreview as OTPField } from "@base-ui/react/otp-field";
 import { Card } from "./Card";
+import { DetailsSection } from "./DetailsSection";
 
 const NIF_LENGTH = 9;
 const WEIGHTS = [9, 8, 7, 6, 5, 4, 3, 2] as const;
@@ -201,39 +202,7 @@ export default function App() {
                   Prefixo desativado — não é emitido desde 2001.
                 </div>
               )}
-              <details className="group mt-4">
-                <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden text-sm font-semibold text-heading flex items-center gap-2 select-none">
-                  <span className="text-lg transition-transform duration-200 group-open:rotate-90">
-                    ▶
-                  </span>
-                  Prefixos do NIF
-                </summary>
-                <div className="mt-4">
-                  <p className="m-0 mb-4 text-sm">
-                    O 1.º ou os 2 primeiros dígitos determinam o tipo de
-                    entidade contribuinte.
-                  </p>
-                  <div
-                    className="grid gap-2"
-                    style={{
-                      gridTemplateColumns:
-                        "repeat(auto-fill, minmax(220px, 1fr))",
-                    }}
-                  >
-                    {PREFIXES.map(({ key, display, type }) => (
-                      <div
-                        key={key}
-                        className="flex items-center gap-2 py-2 px-3 border border-border rounded-lg text-xs"
-                      >
-                        <code className="bg-code text-accent font-mono text-xs font-bold py-0.5 px-2 rounded shrink-0 whitespace-nowrap">
-                          {display}
-                        </code>
-                        <span>{type}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </details>
+              <NifInfoDetails />
             </Card>
           ) : isComplete ? (
             <Card label="Tipo de Entidade" status="error">
@@ -244,39 +213,7 @@ export default function App() {
                 O prefixo <strong>{value.slice(0, 2)}</strong> não corresponde a
                 nenhuma entidade fiscal reconhecida pela AT.
               </div>
-              <details className="group mt-4">
-                <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden text-sm font-semibold text-heading flex items-center gap-2 select-none">
-                  <span className="text-lg transition-transform duration-200 group-open:rotate-90">
-                    ▶
-                  </span>
-                  Prefixos do NIF
-                </summary>
-                <div className="mt-4">
-                  <p className="m-0 mb-4 text-sm">
-                    O 1.º ou os 2 primeiros dígitos determinam o tipo de
-                    entidade contribuinte.
-                  </p>
-                  <div
-                    className="grid gap-2"
-                    style={{
-                      gridTemplateColumns:
-                        "repeat(auto-fill, minmax(220px, 1fr))",
-                    }}
-                  >
-                    {PREFIXES.map(({ key, display, type }) => (
-                      <div
-                        key={key}
-                        className="flex items-center gap-2 py-2 px-3 border border-border rounded-lg text-xs"
-                      >
-                        <code className="bg-code text-accent font-mono text-xs font-bold py-0.5 px-2 rounded shrink-0 whitespace-nowrap">
-                          {display}
-                        </code>
-                        <span>{type}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </details>
+              <NifInfoDetails />
             </Card>
           ) : null}
 
@@ -311,36 +248,61 @@ export default function App() {
                 )}
               </p>
               {calcRows && (
-                <details className="group mt-4">
-                  <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden text-sm font-semibold text-heading flex items-center gap-2 select-none">
-                    <span className="text-lg transition-transform duration-200 group-open:rotate-90">
-                      ▶
-                    </span>
-                    Como é calculado o dígito de controlo?
-                  </summary>
-                  <div className="mt-4 text-sm">
-                    <div className="bg-code p-3 rounded font-mono text-sm flex flex-col gap-1">
-                      <div>
-                        ⇒{" "}
-                        {calcRows
-                          .map((r) => `${r.digit}*${r.weight}`)
-                          .join(" + ")}{" "}
-                        = <b>{calcSum}</b>
-                      </div>
-                      <div>
-                        ⇒ {calcSum} mod 11 = <b>{calcRemainder}</b>
-                      </div>
-                      <div>
-                        ⇒ 11 - 6 = <b>{calcCheck}</b>
-                      </div>
+                <DetailsSection
+                  className="mt-4"
+                  title="Como é calculado o dígito de controlo?"
+                  contentClassName="mt-4 text-sm"
+                >
+                  <div className="bg-code p-3 rounded font-mono text-sm flex flex-col gap-1">
+                    <div>
+                      ⇒{" "}
+                      {calcRows
+                        .map((r) => `${r.digit}*${r.weight}`)
+                        .join(" + ")}{" "}
+                      = <b>{calcSum}</b>
+                    </div>
+                    <div>
+                      ⇒ {calcSum} mod 11 = <b>{calcRemainder}</b>
+                    </div>
+                    <div>
+                      ⇒ 11 - 6 = <b>{calcCheck}</b>
                     </div>
                   </div>
-                </details>
+                </DetailsSection>
               )}
             </Card>
           )}
         </section>
       )}
     </main>
+  );
+}
+
+function NifInfoDetails() {
+  return (
+    <DetailsSection className="mt-4" title="Prefixos do NIF">
+      <p className="m-0 mb-4 text-sm">
+        O 1.º ou os 2 primeiros dígitos determinam o tipo de entidade
+        contribuinte.
+      </p>
+      <div
+        className="grid gap-2"
+        style={{
+          gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+        }}
+      >
+        {PREFIXES.map(({ key, display, type }) => (
+          <div
+            key={key}
+            className="flex items-center gap-2 py-2 px-3 border border-border rounded-lg text-xs"
+          >
+            <code className="bg-code text-accent font-mono text-xs font-bold py-0.5 px-2 rounded shrink-0 whitespace-nowrap">
+              {display}
+            </code>
+            <span>{type}</span>
+          </div>
+        ))}
+      </div>
+    </DetailsSection>
   );
 }
